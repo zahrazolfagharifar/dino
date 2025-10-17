@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>Dino Game 🦖</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fff;
+      overflow: hidden;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #game {
+      width: 800px;
+      height: 200px;
+      border: 2px solid #000;
+      position: relative;
+      overflow: hidden;
+    }
+    #dino {
+      width: 40px;
+      height: 40px;
+      background: black;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+      transition: bottom 0.1s;
+      border-radius: 5px;
+    }
+    #cactus {
+      width: 20px;
+      height: 40px;
+      background: green;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+    <div id="score">امتیاز: 0</div>
+  </div>
+
+  <script>
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const scoreText = document.getElementById("score");
+    let isJumping = false;
+    let gravity = 0.9;
+    let position = 0;
+    let score = 0;
+
+    function jump() {
+      if (isJumping) return;
+      isJumping = true;
+      let upInterval = setInterval(() => {
+        if (position >= 100) {
+          clearInterval(upInterval);
+          // پایین اومدن
+          let downInterval = setInterval(() => {
+            if (position <= 0) {
+              clearInterval(downInterval);
+              isJumping = false;
+            }
+            position -= 5;
+            dino.style.bottom = position + "px";
+          }, 20);
+        }
+        position += 5;
+        dino.style.bottom = position + "px";
+      }, 20);
+    }
+
+    function moveCactus() {
+      let cactusLeft = 800;
+      cactus.style.left = cactusLeft + "px";
+
+      let timer = setInterval(() => {
+        cactusLeft -= 5;
+        cactus.style.left = cactusLeft + "px";
+
+        // برخورد
+        if (cactusLeft > 40 && cactusLeft < 90 && position < 40) {
+          alert("💀 باختی! امتیاز: " + score);
+          clearInterval(timer);
+          window.location.reload();
+        }
+
+        // تکرار مانع
+        if (cactusLeft < -20) {
+          cactusLeft = 800;
+          score++;
+          scoreText.textContent = "امتیاز: " + score;
+        }
+      }, 20);
+    }
+
+    document.addEventListener("keydown", jump);
+    document.addEventListener("touchstart", jump); // برای گوشی 👆
+    moveCactus();
+  </script>
+</body>
+</html>
